@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.nav-scroll {
+  @apply bg-[#f6f1e9] shadow-lg;
+}
+
+.login-bg-active {
+  @apply visible z-50 opacity-100;
+}
+
+.regisparent-Active {
+  @apply bottom-0;
+}
+
+html {
+  @apply scroll-smooth;
+}
+
+section {
+  @apply md:my-28 my-12;
+}
+
+.active-nav > span:nth-child(1) {
+  @apply -rotate-[37deg] bg-red-500;
+}
+
+.active-nav > span:nth-child(2) {
+  @apply scale-0;
+}
+.active-nav > span:nth-child(3) {
+  @apply rotate-[37deg] bg-red-500;
+}
+
+button {
+  @apply font-medium;
+}
+
+.container {
+  @apply px-4;
+}
+@layer utilities {
+  /* .text-stroke  {
+          -webkit-text-fill-color: transparent;
+          -webkit-text-stroke-width: 12px;
+          @apply text-Black-storke
+      } */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+
+
+  h1 {
+    @apply 2xl:text-5xl xl:text-3xl md:text-3xl text-[17px] 3xl:text-6xl font-bold;
+  }
+
+  h2 {
+    @apply 3xl:text-4xl md:text-3xl text-2xl;
+  }
+
+  h3 {
+    @apply md:text-2xl text-lg;
+  }
+
+  h5 {
+    @apply 2xl:text-xl md:text-base text-sm;
+  }
+
+  h6 {
+    @apply 2xl:text-base xl:text-sm md:text-base text-sm;
+  }
+}
+
+.toggle-active {
+  @apply bg-[#CC9B6D] text-white outline-0;
+}
