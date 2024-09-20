@@ -10,6 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet" />
+        
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
 
@@ -21,7 +22,7 @@
             <li>
                 <a href="{{route('front.index')}}" class="flex items-center gap-1.5">
                     CookieCrumbs
-                    <img src="{{asset('assets/logoNav.png')}}" class="w-[15%]" alt="">
+                    <img src="{{asset('assets/aplikasilogo.png')}}" class="w-[15%]" alt="">
                 </a>
             </li>
         </ul>
@@ -32,9 +33,16 @@
 
             @if (Route::has('login'))
                 @auth
-                <li>
+
+                <li class="hidden md:block"><a href="{{route('product_transactions.index')}}">Pesanan</a></li>
+                <li class="hidden md:block">
                     <a class="" href="{{route('front.carts')}}">
                         <i class="p-2 text-base text-white rounded-full md:p-2.5 md:text-xl ti ti-shopping-cart bg-[#CC9B6D] "></i>
+                    </a>
+                </li>
+                <li class="hidden md:block">
+                    <a class="" href="{{route('profile.edit')}}">
+                        <i class="p-2 text-base text-white rounded-full md:p-2.5 md:text-xl ti ti-user-circle bg-[#CC9B6D] "></i>
                     </a>
                 </li>
                 <li>
@@ -68,6 +76,30 @@
         <ul class="md:hidden flex flex-col text-[#CC9B6D] gap-3.5 uppercase text-sm mt-6 px-4">
             <li><a href="{{route('front.index')}}">beranda</a></li>
             <li><a href="{{route('front.allproduct')}}">produk</a></li>
+            <li><a href="{{route('front.contact')}}">kontak</a></li>
+
+            @auth
+            <li><a href="{{route('product_transactions.index')}}">Pesanan</a></li>
+            <li>
+                <a class="" href="{{route('front.carts')}}">
+                    <i class="p-2 text-base text-white rounded-full md:p-2.5 md:text-xl ti ti-shopping-cart bg-[#CC9B6D] "></i>
+                </a>
+            </li>
+            <li class="py-3">
+                <a class="" href="{{route('profile.edit')}}">
+                    <i class="p-2 text-base text-white rounded-full md:p-2.5 md:text-xl ti ti-user-circle bg-[#CC9B6D] "></i>
+                </a>
+            </li>
+            
+            @else
+            <li>
+                <a href="{{ route('login') }}">
+                    <button id="btn-login" class="md:px-12 px-7 py-1.5 font-semibold text-white rounded-lg bg-[#CC9B6D]">
+                        <h6 class="">Masuk</h6>
+                    </button>
+                </a>
+            </li>
+            @endauth
         </ul>
     </div>
 </header>

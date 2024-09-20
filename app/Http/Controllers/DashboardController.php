@@ -12,7 +12,7 @@ class DashboardController extends Controller
     //
     public function index()
     {
-        $totalSales = ProductTransaction::where('is_paid', true)->sum('total_amount');
+        $totalSales = ProductTransaction::where('status', 'berhasil')->sum('total_amount');
         $totalOrders = ProductTransaction::count();
         $totalProducts = Product::count();
         $recentProducts = Product::orderBy('created_at', 'desc')->take(5)->get();

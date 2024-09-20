@@ -25,18 +25,18 @@
                 <p><a class="text-reset text-decoration-none" href="#">Beranda</a></p>
                 <p><a class="text-reset text-decoration-none" href="#ourproduct">Produk Kami</a></p>
                 <p><a class="text-reset text-decoration-none" href="#aboutus">Tentang Kami</a></p>
-                <p><a class="text-reset text-decoration-none" href="#whyus">Why Us</a></p>
+                <p><a class="text-reset text-decoration-none" href="#whyus">Pelayanan Kami</a></p>
             </div>
             <div>
                 <p class="font-semibold">Hubungi Kami</p>
                 <div class="flex items-center gap-4 mt-4 text-2xl">
-                    <a href="">
+                    <a href="mailto:cookiecrumbs412@gmail.com">
                         <i class="ti ti-mail"></i>
                     </a>
-                    <a href="">
+                    <a href="https://wa.me/6281280309073">
                         <i class="ti ti-brand-whatsapp"></i>
                     </a>
-                    
+
                 </div>
             </div>
             <div>

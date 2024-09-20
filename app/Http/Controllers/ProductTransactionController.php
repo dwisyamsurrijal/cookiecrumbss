@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductTransactionController extends Controller
 {
@@ -50,11 +51,11 @@ class ProductTransactionController extends Controller
         $validated = $request->validate([
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
-            'proof' => 'required|image|mimes:png,jpg,jpeg',
             'notes' => 'required|string|max:65535',
             'post_code' => 'required|integer',
             'phone_number' => 'required|integer',
         ]);
+        
 
         DB::beginTransaction();
 
@@ -72,14 +73,12 @@ class ProductTransactionController extends Controller
 
             $validated['user_id'] = $user->id;
             $validated['total_amount'] = $grandTotal;
-            $validated['is_paid'] = false;
+            $validated['status'] = 'diproses';
+            $validated['proof'] = null;
 
-            if($request->hasFile('proof')){
-                $proofPath = $request->file('proof')->store('payment_proofs', 'public');
-                $validated['proof'] = $proofPath;
-            }
-
+          
             $newTransaction = ProductTransaction::create($validated);
+            
 
             foreach($cartItems as $item){
                 TransactionDetail::create([
@@ -94,7 +93,9 @@ class ProductTransactionController extends Controller
 
             DB::commit();
 
-            return redirect()->route('product_transactions.index');
+            
+
+            return redirect()->route('product_transactions.upload_proof', $newTransaction);
         }
 
         catch (\Exception $e){
@@ -108,6 +109,9 @@ class ProductTransactionController extends Controller
 
         }
     }
+
+    // 'proof' => 'required|image|mimes:png,jpg,jpeg',
+    // 
 
     /**
      * Display the specified resource.
@@ -136,7 +140,7 @@ class ProductTransactionController extends Controller
     {
         //
         $productTransaction->update([
-            'is_paid' => true
+            'status' => 'berhasil'
         ]);
 
         //make logic that if is_paid = true then stock on product automatically reduce as many as user buy
@@ -165,6 +169,98 @@ class ProductTransactionController extends Controller
      */
     public function destroy(ProductTransaction $productTransaction)
     {
-        //
+        try {
+            $productTransaction->delete();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            $error = ValidationException::withMessages([
+                'system_error' => ['System error! ' . $e->getMessage()],
+            ]);
+
+            throw $error;
+        }
     }
+
+    public function generatePdf(ProductTransaction $productTransaction)
+    {
+        $productTransaction = ProductTransaction::with('transactionDetails.product')->find($productTransaction->id);
+
+        $pdf = PDF::loadView('pdf.product_transaction', compact('productTransaction'));
+
+        return $pdf->stream('transaction-details.pdf');
+    }
+
+    public function generateAllPdf()
+    {
+        $productTransactions = ProductTransaction::with('transactionDetails.product')
+        ->orderBy('created_at', 'DESC')
+        ->get();
+
+    $pdf = PDF::loadView('pdf.all_product_transactions', compact('productTransactions'));
+
+    return $pdf->stream('all-transactions.pdf');
+    }
+
+    public function search(Request $request)
+    {
+    $user = Auth::user();
+    $keyword = $request->input('keyword');
+
+    if ($user->hasRole('buyer')) {
+        $product_transactions = $user->product_transactions()
+            ->where(function ($query) use ($keyword) {
+                $query->where('id', 'like', '%' . $keyword . '%')
+                    ->orWhereHas('transactionDetails', function ($query) use ($keyword) {
+                        $query->whereHas('product', function ($query) use ($keyword) {
+                            $query->where('name', 'like', '%' . $keyword . '%');
+                        });
+                    });
+            })
+            ->orderBy('id', 'DESC')
+            ->paginate(4);
+    } else {
+        $product_transactions = ProductTransaction::where('id', 'like', '%' . $keyword . '%')
+            ->orWhereHas('user', function ($query) use ($keyword) {
+                $query->where('name', 'like', '%' . $keyword . '%');
+            })
+            ->orderBy('id', 'DESC')
+            ->paginate(4);
+    }
+
+    return view('admin.product_transactions.index', [
+        'product_transactions' => $product_transactions
+    ]);
+    }
+    public function showUploadProofForm(ProductTransaction $productTransaction)
+{
+  $productTransaction = ProductTransaction::with('transactionDetails.product')->findOrFail( $productTransaction->id );
+  return view('product_transactions.upload_proof', compact('productTransaction'));
+}
+
+public function uploadProof(Request $request, ProductTransaction $productTransaction)
+{
+    $validated = $request->validate([
+        'proof' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+    ]);
+
+    if ($request->hasFile('proof')) {
+        $proofPath = $request->file('proof')->store('payment_proofs', 'public');
+        $productTransaction->update([
+            'proof' => $proofPath, 
+            'status' => 'dibayar'
+        ]);
+    }
+
+    return redirect()->route('product_transactions.index')->with('success', 'Bukti pembayaran berhasil diunggah.');
+}
+
+public function cancel(ProductTransaction $productTransaction)
+{
+    if( $productTransaction->status != 'berhasil') {
+        $productTransaction->update(['status'=> 'dibatalkan']);
+    }
+
+    return redirect()->route('product_transactions.index')->with('success', 'Pesanan Berhasil Dibatalkan.');
+}
+
 }

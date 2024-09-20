@@ -18,7 +18,7 @@
         <div class="flex flex-col items-center min-h-screen pt-6 bg-gray-100 sm:justify-center sm:pt-0">
             <div>
                 <a href="/">
-                    <img src="{{asset('assets/cc.png')}}" />
+                    <img class="w-20 h-20 fill-current" src="{{asset('assets/aplikasilogo.png')}}" />
                 </a>
             </div>
 

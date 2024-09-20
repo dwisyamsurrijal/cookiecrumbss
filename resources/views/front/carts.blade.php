@@ -10,7 +10,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet" />
-    <title>Keranjang Belanja</title>
+    <title>Keranjang Belanja | CookieCrumbs</title>
+    <link rel="icon" href="{{asset('assets/aplikasilogo.png')}}" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -34,14 +35,16 @@
                                                                         <button type="submit"
                                                                             class="absolute top-0 right-0 px-2 py-1 text-red-500 bg-red-200 rounded-full hover:bg-red-300">x</button>
                                                                     </form>
-                                                                    <div class="flex items-center mb-4 md:w-1/3 md:mb-0">
+                                                                    <div class="flex items-center mb-4 md:w-1/3 md:mb-0"><a href="{{route('front.product.details', $cart->product->slug)}}">
                                                                         <img src="{{ Storage::url($cart->product->photo) }}" alt="Produk 1"
-                                                                            class="object-cover w-16 h-16 rounded-md">
+                                                                            class="object-cover w-16 h-16 rounded-md"></a>
                                                                         <div class="ml-4">
                                                                             <h4 class="text-lg font-semibold text-gray-800">{{ $cart->product->name }}</h4>
 
                                                                             <p class="text-gray-600 product-price" data-price="{{ $cart->product->price * $cart->quantity }}">
-                                                                                Rp {{ $cart->product->price }}</p>
+                                                                                Rp {{number_format($cart->product->price, 0, ',', '.') }}</p>
+
+                                                                                <h6 class="text-base font-semibold text-gray-800">Stok : {{ $cart->product->stock }}</h6>
                                                                         </div>
                                                                     </div>
                                                                     <div class="flex items-center mb-4 md:mb-0 md:ml-4">
@@ -127,18 +130,27 @@
                     <!-- Right Column: Forms Items -->
                     <div class="w-full md:w-1/2 p-6 bg-[#e2b285]">
                         <h2 class="mb-4 text-xl font-semibold leading-tight text-gray-800">Form Transaksi</h2>
-                        <form method="POST" action="{{route('product_transactions.store')}}" enctype="multipart/form-data">
+
+                        @if($errors->any())
+                        @foreach($errors->all() as $error)
+                        <div class="py-3 w-full rounded-3xl bg-red-500 text-white">
+                            {{$error}}
+                        </div>
+                        @endforeach
+                        @endif
+
+                        <form method="POST" action="{{route('product_transactions.store')}}">
                             @csrf
                             <div class="grid grid-cols-1 lg:grid-cols-2">
                             <div class="col-span-1">
                                 <label for="address" class="block text-sm font-medium text-gray-700">Alamat</label>
-                                <input id="address" name="address" type="text" required autofocus
+                                <input id="address" name="address" type="text" required autofocus value="{{ old('address', Auth::user()->address) }}"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm" placeholder="Jl Pegangsaan timur nomor 20 kecamatan ...">
                             </div>
                     
                             <div class="col-span-1 mt-4">
                                 <label for="city" class="block text-sm font-medium text-gray-700">Kota</label>
-                                <input id="city" name="city" type="text" required
+                                <input id="city" name="city" type="text" value="Tangerang" readonly
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm" placeholder="Tangerang">
                             </div>
                     </div>
@@ -156,15 +168,8 @@
                             </div>
                     
                             <div class="mt-4">
-                                <label for="proof" class="block text-sm font-medium text-gray-700">Bukti
-                                    Transfer</label>
-                                <input id="proof" name="proof" type="file" required
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm">
-                            </div>
-                    
-                            <div class="mt-4">
                                 <label for="notes" class="block text-sm font-medium text-gray-700">Catatan</label>
-                                <textarea id="notes" name="notes" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm" placeholder="Tambahkan catatan untuk alamatmu"></textarea>
+                                <textarea id="notes" name="notes" required class="block w-full mt-1 border-gray-300 rounded-md shadow-sm" placeholder="Tambahkan catatan untuk alamatmu"></textarea>
                             </div>
                     
                             <div class="flex items-center justify-end mt-4">
@@ -177,7 +182,7 @@
                                 <button type="submit"
                                     class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-blue-600 border border-transparent rounded-md ms-4 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                     onclick="return confirm('Apakah semua data sudah terisi dengan benar?')">
-                                    Checkout
+                                    Bayar
                                 </button>
                             </div>
                         </form>

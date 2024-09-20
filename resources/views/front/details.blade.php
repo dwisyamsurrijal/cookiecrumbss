@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="{{asset('css/output.css')}}" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
-    <title>Product Detail</title>
+    <link rel="icon" href="{{asset('assets/aplikasilogo.png')}}" type="image/x-icon">
+    <title>Detail Produk | CookieCrumbs</title>
 </head>
 
 <body class="bg-[#f6f1e9] font-Poppins">
@@ -49,6 +50,7 @@
                         class="px-6 py-2 toggle-tab transition duration-300 ease-in-out rounded-md outline outline-1 outline-amber-500 hover:text-white text-[#CC9B6D] hover:outline-0 hover:bg-[#CC9B6D] ">
                         <h6>Info Pengiriman</h6>
                     </button>
+                    
                 </div>
                 <hr class="border-[0.5px] border-gray-300">
                 <div class="hidden tab-box">
@@ -62,6 +64,8 @@
                 <div class="hidden tab-box">
                     <p class="text-justify text-gray-600">Pengiriman akan dilakukan saat admin sudah approve pesananmu
                     </p>
+                </div>
+                
                 </div>
             </div>
             <!-- Right Column: Quantity Controls -->

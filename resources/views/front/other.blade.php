@@ -25,7 +25,7 @@
                                 </a>
                                 <div class="flex flex-col self-center col-span-3 gap-2 md:gap-4 wrapper">
                                     <h5 class="font-semibold">{{ $product->name }}</h5>
-                                    <h6 class="text-justify line-clamp-3">{{ $product->about }}</h6>
+                                    <h6 class="font-light line-clamp-3">{{ $product->about }}</h6>
                                     <h5>Rp {{ number_format($product->price, 0, ',', '.') }}</h5>
                                 </div>
                             </div>

@@ -18,7 +18,7 @@
                                 Total Transaksi
                             </p>
                             <h3 class="text-xl font-bold text-indigo-950">
-                                Rp {{$productTransaction->total_amount}}
+                                Rp {{number_format($productTransaction->total_amount,0,'.',',')}}
                             </h3>
                         </div>
                     </div>
@@ -27,24 +27,38 @@
                             Tanggal Transaksi
                         </p>
                         <h3 class="text-xl font-bold text-indigo-950">
-                            {{$productTransaction->created_at}}
+                            {{$productTransaction->formatted_created_at}}
                         </h3>
                     </div>
-                    @if ($productTransaction->is_paid)
+                    @if ($productTransaction->status == 'berhasil')
                         <span class="px-3 py-1 text-white bg-green-500 rounded-full">
                             <p class="text-sm font-bold text-white">BERHASIL</p>
                         </span>
-                    @else
-                        <span class="px-3 py-1 text-white bg-orange-500 rounded-full">
+
+                        @elseif ($productTransaction->status == 'dibatalkan')
+                        <span class="px-3 py-1 text-white bg-red-500 rounded-full">
+                            <p class="text-sm font-bold text-white">DIBATALKAN</p>
+                        </span>
+                        
+                    @elseif($productTransaction->proof)
+                    <span class="px-3 py-1 text-white bg-blue-500 rounded-full">
                             <p class="text-sm font-bold text-white">DIPROSES</p>
+                        </span>
+                    @else
+                        <span class="px-3 py-1 text-white text-center bg-orange-500 rounded-full">
+                            <p class="text-sm font-bold text-white">BELUM DIBAYAR</p>
                         </span>
                     @endif
                 </div>
                 <hr class="my-3">
-
+                <div class="flex flex-row justify-between">
                 <h3 class="text-xl font-bold text-indigo-950">
                     Daftar Item
                 </h3>
+                <h3 class="text-xl font-bold text-indigo-950">
+                    Jumlah
+                </h3>
+                </div>
 
                 <div class="grid grid-cols-1 gap-x-24">
                     <div class="flex flex-col col-span-1 gap-y-5">
@@ -57,7 +71,7 @@
                                             {{$detail->product->name}}
                                         </h3>
                                         <p class="text-base text-slate-500">
-                                            {{$detail->product->price}}
+                                           Rp {{number_format($detail->product->price * $detail->quantity, 0, ',', '.')}}
                                         </p>
                                     </div>
                                 </div>
@@ -69,10 +83,10 @@
                         <h3 class="text-xl font-bold text-indigo-950">
                             Detail Pengiriman
                         </h3>
-                        <div class="flex flex-row items-center justify-between item-card">
+                        <div class="flex flex-row items-center gap-4 justify-between item-card">
                             <p class="text-base text-slate-500">
                                 Alamat</p>
-                            <h3 class="text-xl font-bold text-indigo-950">
+                            <h3 class="text-base text-right font-bold text-indigo-950">
                                 {{$productTransaction->address}}
                             </h3>
                         </div>
@@ -110,16 +124,20 @@
                                 Bukti Pembayaran :
                             </h3>
                             <img src="{{Storage::url($productTransaction->proof)}}"
-                                alt="{{Storage::url($productTransaction->proof)}}" class="w-[300px] h-[400px]">
+                                alt="bukti transfer" class="w-[300px] h-[400px]">
                         </div>
                     </div>
                 </div>
                 <hr class="my-3">
 
                 @role('owner')
-                @if ($productTransaction->is_paid)
-                    <a href="#" class="py-3 text-white text-center bg-indigo-700 rounded-full w-full">
-                        Hubungi Pembeli
+                @if ($productTransaction->status == 'berhasil')
+                    <a href="{{route('product_transactions.index')}}" class="py-3 text-white text-center bg-indigo-700 rounded-full w-full">
+                        Kembali ke Transaksi Produk
+                    </a>
+                    @elseif ($productTransaction->status == 'dibatalkan')
+                    <a href="{{route('product_transactions.index')}}" class="py-3 text-white text-center bg-indigo-700 rounded-full w-full">
+                        Kembali ke Transaksi Produk
                     </a>
                 @else
                     <form method="POST" action="{{ route('product_transactions.update', $productTransaction) }}">
@@ -129,12 +147,32 @@
                             Menyetujui Pembelian
                         </button>
                     </form>
+                    <form method="POST" action="{{ route('product_transactions.cancel', $productTransaction) }}">
+                        @csrf
+                        @method('PUT')
+                        <button class="py-3 text-white bg-red-700 rounded-full w-full hover:bg-red-800">
+                            Batalkan Pesanan
+                        </button>
+                    </form>
                 @endif
                 @endrole
 
                 @role('buyer')
-                <a href="#" class="px-5 py-3 text-white text-center bg-indigo-700 rounded-full w-full">
+                <div class="flex gap-5">
+                <a href="https://wa.me/6281280309073" class="px-5 py-3 text-white text-center bg-indigo-700 rounded-full w-full">
                     Kontak Admin
+                </a>
+                
+                
+                @if ($productTransaction->status == 'diproses' && !$productTransaction->proof)
+                    <a href="{{ route('product_transactions.upload_proof', $productTransaction) }}" class="px-5 py-3 text-white text-center bg-indigo-700 rounded-full w-full">
+                        Unggah Bukti Pembayaran
+                    </a>
+                    @endif
+                
+                </div>
+                <a href="{{route('front.index')}}" class="px-5 py-3 text-white text-center bg-amber-500 rounded-full w-full">
+                    Kembali Belanja
                 </a>
                 @endrole
             </div>

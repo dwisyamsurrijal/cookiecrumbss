@@ -4,11 +4,20 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
+                @role('owner')
                 <div class="flex items-center shrink-0">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block w-auto text-gray-800 fill-current h-9" />
+                        <img src="{{asset('assets/aplikasilogo.png')}}" class="block w-auto text-gray-800 fill-current h-9" />
                     </a>
                 </div>
+                @endrole
+                @role('buyer')
+                <div class="flex items-center shrink-0">
+                    <a href="{{ route('front.index') }}">
+                        <img src="{{asset('assets/aplikasilogo.png')}}" class="block w-auto text-gray-800 fill-current h-9" />
+                    </a>
+                </div>
+                @endrole
 
                 <!-- Navigation Links -->
                 @role('owner')
@@ -89,6 +98,20 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @role('owner')
+        <x-responsive-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
+            {{ __('Atur Produk') }}
+        </x-responsive-nav-link>
+        <x-responsive-nav-link :href="route('product_transactions.index')" :active="request()->routeIs('product_transactions.index')">
+            {{ __('Pesanan Masuk') }}
+        </x-responsive-nav-link>
+        @endrole
+
+        @role('buyer')
+        <x-responsive-nav-link :href="route('product_transactions.index')" :active="request()->routeIs('product_transactions.index')">
+            {{ __('Pesanan') }}
+        </x-responsive-nav-link>
+        @endrole
         </div>
 
         <!-- Responsive Settings Options -->

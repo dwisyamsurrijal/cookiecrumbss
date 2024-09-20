@@ -159,4 +159,18 @@ class ProductController extends Controller
     }
 }
 
+public function searchproduct(Request $request)
+{
+    $keyword = $request->input('keyword');
+
+    $products = Product::where('name', 'LIKE', '%' . $keyword . '%')
+                       
+                       ->paginate(4);
+
+    return view('admin.products.index', [
+        'products' => $products,
+        'keyword' => $keyword,
+    ]);
+}
+
 }

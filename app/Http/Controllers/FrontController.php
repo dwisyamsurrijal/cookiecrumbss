@@ -39,6 +39,20 @@ class FrontController extends Controller
         return view('front.contact');
     }
 
+    public function search(Request $request)
+    {
+        
+        $keyword = $request->input('keyword');
+
+        $products = Product::where('name', 'LIKE', '%' . $keyword . '%')
+            ->get();
+
+        return view('front.allproduct', [
+            'allproducts' => $products,
+            'keyword' => $keyword,
+        ]);
+    }
+
     
 
 }
